@@ -1,0 +1,8 @@
+<resources>
+
+    <!-- Thème de base de l'application. Personnalisation visuelle à traiter
+         séparément (hors périmètre de cette étape infrastructure). -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    </style>
+
+</resources>
