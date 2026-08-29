@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Squelette de manifest — à intégrer dans le projet Android généré par
+  `react-native init` / template officiel, pas à utiliser seul.
+
+  Permissions demandées uniquement pour ce qui est réellement nécessaire
+  (Partie 6 §10, Partie 3 §6) :
+  - Accès aux médias (Android 13+ : permissions granulaires par type)
+  - Accès stockage (Android < 13 : permission historique, dépréciée)
+  - Internet (uniquement pour la vérification de mise à jour — Partie 1 §6)
+  - Notifications (contrôle audio en arrière-plan — Partie 7 §9)
+  - Service de premier plan média (lecture audio arrière-plan — Partie 4 §7)
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+    <!-- Android 13+ (API 33) : permissions granulaires -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- Android < 13 : permission historique (dépréciée progressivement) -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <application
+        android:name=".MainApplication"
+        android:label="@string/app_name"
+        android:allowBackup="false"
+        android:supportsRtl="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+            android:windowSoftInputMode="adjustResize"
+            android:supportsPictureInPicture="true">
+            <!--
+              supportsPictureInPicture active le PiP natif Android (Partie 4 §18,
+              Partie 7 §13). Le déclenchement réel (enterPictureInPictureMode) doit
+              être ajouté côté MainActivity.java/kt — voir // TODO natif dans
+              VideoPlayerScreen.tsx.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Réception de fichiers depuis d'autres applications (Partie 2 §26) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="video/*" />
+                <data android:mimeType="application/pdf" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Service de premier plan pour react-native-track-player (Partie 7 §8-9) -->
+        <service
+            android:name="com.doublesymmetry.trackplayer.service.MusicService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="false" />
+
+    </application>
+</manifest>
