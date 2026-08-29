@@ -4,6 +4,10 @@ name: Generate gradle-wrapper.jar
 # de build/CI de DSI Vault. Il sert uniquement à produire le binaire
 # gradle-wrapper.jar que l'environnement de développement actuel ne peut pas
 # générer (pas de Gradle installé, pas d'accès réseau).
+#
+# Gradle est téléchargé directement (curl) plutôt que via gradle/actions/setup-gradle,
+# pour ne pas dépendre du service de cache GitHub Actions (indisponible au moment
+# des runs précédents et responsable de l'échec).
 on:
   workflow_dispatch:
 
@@ -21,10 +25,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Installer Gradle 8.6
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.6'
+      - name: Télécharger Gradle 8.6 (téléchargement direct, sans cache Actions)
+        run: |
+          curl -sL -o /tmp/gradle-8.6-bin.zip https://services.gradle.org/distributions/gradle-8.6-bin.zip
+          unzip -q /tmp/gradle-8.6-bin.zip -d /opt
+          echo "/opt/gradle-8.6/bin" >> "$GITHUB_PATH"
+
+      - name: Vérifier l'installation de Gradle
+        run: gradle --version
 
       - name: Générer le wrapper dans android/
         working-directory: android
