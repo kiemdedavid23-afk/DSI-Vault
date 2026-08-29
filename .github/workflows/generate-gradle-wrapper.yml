@@ -1,13 +1,5 @@
 name: Generate gradle-wrapper.jar
 
-# Déclenchement manuel uniquement — ce workflow ne fait pas partie du pipeline
-# de build/CI de DSI Vault. Il sert uniquement à produire le binaire
-# gradle-wrapper.jar que l'environnement de développement actuel ne peut pas
-# générer (pas de Gradle installé, pas d'accès réseau).
-#
-# Gradle est téléchargé directement (curl) plutôt que via gradle/actions/setup-gradle,
-# pour ne pas dépendre du service de cache GitHub Actions (indisponible au moment
-# des runs précédents et responsable de l'échec).
 on:
   workflow_dispatch:
 
@@ -18,6 +10,14 @@ jobs:
     steps:
       - name: Checkout du dépôt
         uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Installer les dépendances npm (nécessaire : settings.gradle référence node_modules)
+        run: npm ci
 
       - name: Installer le JDK
         uses: actions/setup-java@v4
