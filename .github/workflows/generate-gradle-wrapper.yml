@@ -1,0 +1,46 @@
+name: Generate gradle-wrapper.jar
+
+# Déclenchement manuel uniquement — ce workflow ne fait pas partie du pipeline
+# de build/CI de DSI Vault. Il sert uniquement à produire le binaire
+# gradle-wrapper.jar que l'environnement de développement actuel ne peut pas
+# générer (pas de Gradle installé, pas d'accès réseau).
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-wrapper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer le JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Installer Gradle 8.6
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.6'
+
+      - name: Générer le wrapper dans android/
+        working-directory: dsi-vault/android
+        run: gradle wrapper --gradle-version 8.6
+
+      - name: Vérifier que le jar généré n'est pas vide
+        working-directory: dsi-vault/android
+        run: |
+          test -s gradle/wrapper/gradle-wrapper.jar
+          file gradle/wrapper/gradle-wrapper.jar
+          ls -la gradle/wrapper/
+
+      - name: Committer le fichier généré
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dsi-vault/android/gradle/wrapper/gradle-wrapper.jar
+          git diff --cached --quiet || git commit -m "chore: génère gradle-wrapper.jar (Gradle 8.6)"
+          git push
