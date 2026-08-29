@@ -16,6 +16,14 @@ jobs:
         with:
           node-version: 20
 
+      - name: Debug: versions et node_modules
+        run: |
+          node -v || true
+          npm -v || true
+          echo "WORKDIR: $(pwd)"
+          ls -la || true
+          ls -la node_modules || true
+
       - name: Installer les dépendances npm (nécessaire : settings.gradle référence node_modules)
         run: npm ci
 
@@ -32,11 +40,17 @@ jobs:
           echo "/opt/gradle-8.6/bin" >> "$GITHUB_PATH"
 
       - name: Vérifier l'installation de Gradle
-        run: gradle --version
+        run: gradle --version || true
 
-      - name: Générer le wrapper dans android/
+      - name: Afficher android/settings.gradle (debug)
+        run: |
+          echo "--- android/settings.gradle ---"
+          sed -n '1,200p' android/settings.gradle || true
+          echo "-------------------------------"
+
+      - name: Générer le wrapper dans android/ (avec debug)
         working-directory: android
-        run: gradle wrapper --gradle-version 8.6
+        run: gradle wrapper --gradle-version 8.6 --stacktrace --info
 
       - name: Vérifier que le jar généré n'est pas vide
         working-directory: android
