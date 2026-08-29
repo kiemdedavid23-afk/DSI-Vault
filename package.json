@@ -8,6 +8,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@babel/runtime": "^7.24.0",
     "react": "18.2.0",
     "react-native": "0.74.0",
     "@react-navigation/native": "^6.1.17",
@@ -25,6 +26,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
+    "@react-native-community/cli": "^13.6.6",
+    "@react-native-community/cli-platform-android": "^13.6.6",
+    "@react-native/babel-preset": "0.74.0",
+    "@react-native/metro-config": "0.74.0",
     "@types/react": "^18.2.0",
     "typescript": "^5.4.0"
   }
